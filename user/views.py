@@ -84,7 +84,6 @@ class VerifyUserView(APIView):
 
 class RegisterUserView(APIView):
     permission_classes = [AllowAny]
-
     def post(self, request):
         print(request.data)
         email = request.data.get("email")
@@ -120,6 +119,67 @@ class RegisterUserView(APIView):
             )
         try:
             get_user_model().objects.create_user(
+                email=email,
+                firstname=firstname,
+                lastname=lastname,
+                phone_number=phone_number,
+                password=password,
+            )
+            return create_response(
+                success=True,
+                message="User created successfully!",
+                http_status=status.HTTP_200_OK,
+            )
+        except IntegrityError as e:
+            return create_response(
+                success=False,
+                message="A database error occurred. Please try again.",
+                http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except Exception as e:
+            return create_response(
+                success=False,
+                message=f"An unexpected error occurred: {str(e)}",
+                http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+class RegisterSuperUserView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        print(request.data)
+        email = request.data.get("email")
+        code = request.data.get("code")
+        firstname = request.data.get("firstname")
+        lastname = request.data.get("lastname")
+        phone_number = request.data.get("phone_number")
+        password = request.data.get("password")
+        if not email or not code:
+            return create_response(
+                success=False,
+                message="Email and OTP code are required.",
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+        valid = verify_otp(email, code)
+        if CustomUser.objects.filter(email=email).exists():
+            return create_response(
+                success=False,
+                message="Email already exists",
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+        if CustomUser.objects.filter(phone_number=phone_number).exists():
+            return create_response(
+                success=False,
+                message="Phone Number already exists",
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not valid.get("success"):
+            return create_response(
+                success=False,
+                message="OTP verification failed.",
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            get_user_model().objects.create_superuser(
                 email=email,
                 firstname=firstname,
                 lastname=lastname,

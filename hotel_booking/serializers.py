@@ -5,10 +5,6 @@ from hotel.serializer import HotelSerializer
 
 
 class CreateHotelBookingSerializer(serializers.ModelSerializer):
-    hotel = serializers.PrimaryKeyRelatedField(
-        queryset=Hotel.objects.all(), write_only=True
-    )
-
     class Meta:
         model = HotelBooking
         fields = "__all__"

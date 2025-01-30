@@ -3,6 +3,7 @@ from .views import (
     RegisterUserView,
     LoginUserView,
     JWTDetailsView,
+    RegisterSuperUserView,
     VerifyUserView,
     DeleteUserView,
     ChangePasswordView,
@@ -18,6 +19,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path("register/", RegisterUserView.as_view(), name="register"),
+    path("register/admin/", RegisterSuperUserView.as_view(), name="register"),
     path("login/", LoginUserView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("verify/", VerifyUserView.as_view(), name="verify"),

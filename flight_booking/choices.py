@@ -16,6 +16,8 @@ PAYMENT_STATUS_CHOICES = [
     ('confirmed', 'confirmed'),
 ]
 
+
+
 CURRENCY_CHOICES = [
     ('usd', 'USD'),
     ('eur', 'EUR'),
